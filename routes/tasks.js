@@ -161,7 +161,6 @@ module.exports = function (router) {
                 if (!isObjectId(req.params.id)) return send(res, 404, 'Task not found', null);
                 var task = await Task.findById(req.params.id);
                 if (!task) return send(res, 404, 'Task not found', null);
-                var data = task.toObject();
                 if (task.assignedUser) {
                     await User.updateOne(
                         { _id: task.assignedUser },
@@ -169,7 +168,7 @@ module.exports = function (router) {
                     );
                 }
                 await task.deleteOne();
-                send(res, 200, 'OK', data);
+                res.status(204).end();
             } catch (err) {
                 if (!res.headersSent) send(res, 500, 'Something went wrong', null);
             }

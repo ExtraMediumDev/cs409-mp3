@@ -147,13 +147,12 @@ module.exports = function (router) {
                 if (!isObjectId(req.params.id)) return send(res, 404, 'User not found', null);
                 var user = await User.findById(req.params.id);
                 if (!user) return send(res, 404, 'User not found', null);
-                var data = user.toObject();
                 await Task.updateMany(
                     { assignedUser: String(user._id) },
                     { $set: { assignedUser: '', assignedUserName: 'unassigned' } }
                 );
                 await user.deleteOne();
-                send(res, 200, 'OK', data);
+                res.status(204).end();
             } catch (err) {
                 if (!res.headersSent) send(res, 500, 'Something went wrong', null);
             }
